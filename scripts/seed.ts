@@ -184,6 +184,28 @@ const seedData = [
       { size: "30ml", priceKes: 2500, stock: 8, sku: "AU-RS-30" },
     ],
   },
+    {
+    slug: "test-perfume",
+    name: "Test Perfume (KSh 1)",
+    brand: "Aurum Testing",
+    category: "unisex",
+    shortDescription: "A test product for M-Pesa integration.",
+    fullDescription: "This product is used to test the payment flow.",
+    fragranceFamily: "Fresh",
+    scentNotes: { top: ["Test"], heart: ["Test"], base: ["Test"] },
+    characteristics: ["test"],
+    occasions: [],
+    seasons: [],
+    images: [],
+    isBestseller: false,
+    isNewArrival: false,
+    isPublished: true, // MUST BE TRUE to show on the shop page
+    seoTitle: "Test Perfume",
+    seoDescription: "Test product",
+    variants: [
+      { size: "10ml", priceKes: 1, stock: 100, sku: "TEST-1" },
+    ],
+  },
 ];
 
 // --- Main -----------------------------------------------------------------
