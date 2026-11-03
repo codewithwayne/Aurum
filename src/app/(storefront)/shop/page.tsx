@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import { eq, desc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { products, productVariants } from "@/lib/db/schema";
 import { ShopClient } from "@/components/product/ShopClient";
+
+export const dynamic = "force-dynamic";
 
 export default async function ShopPage() {
   const allProducts = await db
@@ -36,10 +39,12 @@ export default async function ShopPage() {
       </section>
 
       <section className="mx-auto max-w-[1400px] border-t border-[#1a3a2e]/10 px-6 py-12 lg:px-12">
-        <ShopClient 
-          initialProducts={allProducts} 
-          variantsByProduct={variantsByProduct} 
-        />
+        <Suspense fallback={<p className="text-[#1a3a2e]/60">Loading catalogue...</p>}>
+          <ShopClient
+            initialProducts={allProducts}
+            variantsByProduct={variantsByProduct}
+          />
+        </Suspense>
       </section>
     </main>
   );

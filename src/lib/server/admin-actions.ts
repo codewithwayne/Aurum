@@ -104,7 +104,7 @@ export async function createProduct(formData: FormData) {
             priceKes: parseInt(v.priceKes),
             stock: parseInt(v.stock),
             sku: v.sku,
-            image: v.image || null, // <-- Save variant image
+            image: v.image || null,
           }))
         );
       }
@@ -185,25 +185,23 @@ export async function updateProduct(formData: FormData) {
 
     for (const v of variantsData) {
       if (existingBySku.has(v.sku)) {
-        // Update existing variant (WITH IMAGE)
         await db
           .update(productVariants)
           .set({
             size: v.size,
             priceKes: parseInt(v.priceKes),
             stock: parseInt(v.stock),
-            image: v.image || null, // <-- Update variant image
+            image: v.image || null,
           })
           .where(eq(productVariants.id, existingBySku.get(v.sku)!.id));
       } else {
-        // Insert new variant (WITH IMAGE)
         await db.insert(productVariants).values({
           productId,
           size: v.size,
           priceKes: parseInt(v.priceKes),
           stock: parseInt(v.stock),
           sku: v.sku,
-          image: v.image || null, // <-- Save new variant image
+          image: v.image || null,
         });
       }
       submittedSkus.add(v.sku);
@@ -248,8 +246,7 @@ export async function toggleProductPublish(formData: FormData) {
 
     revalidatePath("/admin/products");
     revalidatePath("/shop");
-    return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("Toggle publish error:", error);
   }
 }

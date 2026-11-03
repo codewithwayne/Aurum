@@ -1,10 +1,12 @@
+import { Suspense } from "react";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { products, productVariants } from "@/lib/db/schema";
 import { ShopClient } from "@/components/product/ShopClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function SearchPage() {
-  // 1. Fetch all published products (same as the shop page)
   const allProducts = await db
     .select()
     .from(products)
@@ -30,11 +32,12 @@ export default async function SearchPage() {
       </section>
 
       <section className="mx-auto max-w-[1400px] border-t border-[#1a3a2e]/10 px-6 py-12 lg:px-12">
-        {/* We reuse the ShopClient, but without the sidebar filters */}
-        <ShopClient 
-          initialProducts={allProducts} 
-          variantsByProduct={variantsByProduct} 
-        />
+        <Suspense fallback={<p className="text-[#1a3a2e]/60">Loading...</p>}>
+          <ShopClient
+            initialProducts={allProducts}
+            variantsByProduct={variantsByProduct}
+          />
+        </Suspense>
       </section>
     </main>
   );

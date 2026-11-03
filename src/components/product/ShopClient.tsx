@@ -12,6 +12,7 @@ type Variant = {
   priceKes: number;
   stock: number;
   sku: string;
+  image: string | null; // <-- Added this line
 };
 
 type Product = {
@@ -72,7 +73,7 @@ export function ShopClient({
     setFilters((prev) => {
       const currentArray = prev[key] as string[];
       const isSelected = currentArray.includes(value);
-      
+
       return {
         ...prev,
         [key]: isSelected
@@ -97,9 +98,9 @@ export function ShopClient({
   // 4. INSTANT Filtering Logic
   const filteredProducts = initialProducts.filter((p) => {
     if (filters.categories.length > 0 && !filters.categories.includes(p.category)) return false;
-    
+
     if (filters.families.length > 0 && (!p.fragranceFamily || !filters.families.includes(p.fragranceFamily))) return false;
-    
+
     if (filters.occasions.length > 0) {
       const productOccasions = p.occasions || [];
       if (!filters.occasions.some((occ) => productOccasions.includes(occ))) return false;

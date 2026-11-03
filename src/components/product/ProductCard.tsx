@@ -6,6 +6,7 @@ type Variant = {
   priceKes: number;
   stock: number;
   sku: string;
+  image: string | null;
 };
 
 type ProductCardProps = {
@@ -17,6 +18,7 @@ type ProductCardProps = {
     shortDescription: string;
     isBestseller: boolean;
     isNewArrival: boolean;
+    images: string[];
   };
   variants: Variant[];
 };
