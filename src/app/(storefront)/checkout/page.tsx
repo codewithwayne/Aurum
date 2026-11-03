@@ -13,6 +13,7 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    email: "",
     county: "",
     estate: "",
     building: "",
@@ -81,24 +82,26 @@ export default function CheckoutPage() {
                 className="w-full border border-[#1a3a2e]/20 bg-transparent p-4 text-sm focus:border-[#1a3a2e] focus:outline-none"
               />
               
-              {/* UPDATED PHONE INPUT */}
               <div>
                 <input
-                  required 
-                  type="tel" 
-                  placeholder="0712 345 678"
+                  required type="tel" placeholder="0712 345 678"
                   value={formData.phone} 
                   onChange={(e) => {
-                    // Strip out any non-numbers and limit to 10 digits
                     const val = e.target.value.replace(/\D/g, "").slice(0, 10);
                     setFormData({ ...formData, phone: val });
                   }}
-                  // HTML5 validation: Must start with 0, followed by 9 digits
                   pattern="^0[0-9]{9}$"
                   title="Phone number must be 10 digits and start with 0"
                   className="w-full border border-[#1a3a2e]/20 bg-transparent p-4 text-sm focus:border-[#1a3a2e] focus:outline-none"
                 />
-                
+              </div>
+
+              <div>
+                <input
+                  type="email" placeholder="Email address (Optional, for receipt)"
+                  value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full border border-[#1a3a2e]/20 bg-transparent p-4 text-sm focus:border-[#1a3a2e] focus:outline-none"
+                />
               </div>
             </div>
           </div>
@@ -107,7 +110,6 @@ export default function CheckoutPage() {
             <h2 className="mb-4 text-xs uppercase tracking-widest text-[#1a3a2e]/60">Delivery Method</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
-              {/* UPDATED DELIVERY COPY */}
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, deliveryMethod: "standard" })}
@@ -186,7 +188,6 @@ export default function CheckoutPage() {
           </button>
         </form>
 
-        {/* Summary Sidebar */}
         <div className="bg-[#f0eadc] p-8 h-fit">
           <h2 className="font-serif text-2xl text-[#1a3a2e]">Order Summary</h2>
           <div className="mt-6 space-y-4">
