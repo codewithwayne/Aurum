@@ -33,7 +33,7 @@ export function Header() {
 
           {/* Icons */}
           <div className="flex items-center gap-6 text-[#1a3a2e]">
-            <button aria-label="Search"><Search size={20} strokeWidth={1.5} /></button>
+            <Link href="/search" aria-label="Search"><Search size={20} strokeWidth={1.5} /></Link>
             <Link href="/account" aria-label="Account"><User size={20} strokeWidth={1.5} /></Link>
             
             {/* THE CART ICON & BADGE */}

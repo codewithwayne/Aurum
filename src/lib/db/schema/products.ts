@@ -61,6 +61,7 @@ export const productVariants = pgTable(
     stock: integer("stock").notNull().default(0),
     sku: varchar("sku", { length: 100 }).notNull().unique(),
     isAvailable: boolean("is_available").notNull().default(true),
+    image: varchar("image", { length: 500 }),
   },
   (table) => [
     uniqueIndex("product_variants_product_size_idx").on(

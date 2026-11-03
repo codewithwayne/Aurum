@@ -21,6 +21,7 @@ type Props = {
     shortDescription: string;
     isBestseller: boolean;
     isNewArrival: boolean;
+    images: string[];
   };
   variants: Variant[];
 };
@@ -30,15 +31,11 @@ export function ProductCardClient({ product, variants }: Props) {
     variants.length > 0 ? variants[0] : null
   );
   const [isAdded, setIsAdded] = useState(false);
-  
-  // Bring in the cart function
   const { addItem } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    // Prevent the Link from navigating if they just want to add to cart
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
-
     if (!selectedVariant) return;
 
     addItem({
@@ -52,10 +49,11 @@ export function ProductCardClient({ product, variants }: Props) {
       stock: selectedVariant.stock,
     });
 
-    // Show "Added" feedback
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
+
+  const primaryImage = product.images?.[0];
 
   return (
     <div className="group flex flex-col">
@@ -71,7 +69,17 @@ export function ProductCardClient({ product, variants }: Props) {
             New
           </span>
         )}
-        <Link href={`/products/${product.slug}`} className="block h-full w-full transition-transform duration-500 group-hover:scale-105" />
+        <Link href={`/products/${product.slug}`} className="block h-full w-full">
+          {primaryImage ? (
+            <img
+              src={primaryImage}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="h-full w-full" />
+          )}
+        </Link>
       </div>
 
       {/* TEXT & PRICE */}
@@ -93,10 +101,8 @@ export function ProductCardClient({ product, variants }: Props) {
           {product.shortDescription}
         </p>
 
-        {/* VARIANTS & PRICE */}
         <div className="mt-auto pt-6">
           <div className="flex items-center justify-between">
-            {/* Size Buttons */}
             <div className="flex gap-1">
               {variants.map((v) => (
                 <button
@@ -115,7 +121,6 @@ export function ProductCardClient({ product, variants }: Props) {
                 </button>
               ))}
             </div>
-            {/* Price */}
             {selectedVariant && (
               <p className="text-sm font-medium">
                 KSh {selectedVariant.priceKes.toLocaleString()}
@@ -123,21 +128,20 @@ export function ProductCardClient({ product, variants }: Props) {
             )}
           </div>
 
-          {/* Add to Bag Button */}
           <button
             onClick={handleAddToCart}
             disabled={!selectedVariant || selectedVariant.stock <= 0 || isAdded}
             className={`mt-4 w-full border py-3 text-xs uppercase tracking-widest transition-colors disabled:opacity-50 ${
-              isAdded 
-                ? "border-green-800 bg-green-800 text-white" 
+              isAdded
+                ? "border-green-800 bg-green-800 text-white"
                 : "border-[#1a3a2e] text-[#1a3a2e] hover:bg-[#1a3a2e] hover:text-[#f9f6ef]"
             }`}
           >
-            {!selectedVariant || selectedVariant.stock <= 0 
-              ? "Sold out" 
-              : isAdded 
-                ? "Added ✓" 
-                : "Add to bag"}
+            {!selectedVariant || selectedVariant.stock <= 0
+              ? "Sold out"
+              : isAdded
+              ? "Added ✓"
+              : "Add to bag"}
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ type Variant = {
   priceKes: number;
   stock: number;
   sku: string;
+  image: string | null;
 };
 
 type Product = {
@@ -17,13 +18,19 @@ type Product = {
   name: string;
 };
 
-export function ProductBuyBox({ variants, product }: { variants: Variant[]; product: Product }) {
-  const [selectedVariant, setSelectedVariant] = useState<Variant>(
-    variants.length > 0 ? variants[0] : null
-  );
+export function ProductBuyBox({ 
+  variants, 
+  product,
+  selectedVariant,
+  setSelectedVariant 
+}: { 
+  variants: Variant[]; 
+  product: Product;
+  selectedVariant: Variant | null;
+  setSelectedVariant: (v: Variant) => void;
+}) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
-  
   const { addItem } = useCart();
 
   if (!selectedVariant) return <p className="mt-6 text-red-500">Out of stock</p>;
@@ -41,8 +48,6 @@ export function ProductBuyBox({ variants, product }: { variants: Variant[]; prod
       quantity: quantity,
       stock: selectedVariant.stock,
     });
-
-    // Show success state for 2 seconds
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
@@ -85,9 +90,7 @@ export function ProductBuyBox({ variants, product }: { variants: Variant[]; prod
           onClick={handleAddToCart}
           disabled={isOutOfStock || isAdded}
           className={`flex-1 py-3 text-sm uppercase tracking-widest transition-all ${
-            isAdded 
-              ? "bg-green-800 text-white" 
-              : "bg-[#1a3a2e] text-[#f9f6ef] hover:opacity-90 disabled:opacity-50"
+            isAdded ? "bg-green-800 text-white" : "bg-[#1a3a2e] text-[#f9f6ef] hover:opacity-90 disabled:opacity-50"
           }`}
         >
           {isOutOfStock ? "Sold Out" : isAdded ? "Added to Bag ✓" : "Add to Cart"}

@@ -25,6 +25,7 @@ type Product = {
   occasions: string[] | null;
   isBestseller: boolean;
   isNewArrival: boolean;
+  images: string[];
 };
 
 export type FilterState = {
