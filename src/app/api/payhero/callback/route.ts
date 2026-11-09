@@ -3,11 +3,11 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/server/resend";
+import { generateReceiptPDF } from "@/lib/server/pdf"; // <-- Import this
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { status, response } = body;
 
     if (!response || !response.ExternalReference) {
@@ -33,18 +33,18 @@ export async function POST(req: Request) {
       resultCode === 1032;
 
     if (isSuccessful) {
-      // 1. Update DB
       await db
         .update(orders)
-        .set({ status: "paid", paymentStatus: "success" ,mpesaReceipt: mpesaReceipt})
-        
+        .set({ 
+          status: "paid", 
+          paymentStatus: "success",
+          mpesaReceipt: mpesaReceipt
+        })
         .where(eq(orders.orderNumber, orderNumber));
 
-      // 2. Fetch the order to get details for the emails
       const [order] = await db.select().from(orders).where(eq(orders.orderNumber, orderNumber)).limit(1);
 
       if (order) {
-        // 3. Send Emails (Run them in parallel so they don't block each other)
         const emailPromises = [
           sendAdminOrderNotification({
             orderNumber: order.orderNumber,
@@ -53,8 +53,10 @@ export async function POST(req: Request) {
           })
         ];
 
-        // Only send customer email if they provided one
         if (order.customerEmail) {
+          // GENERATE PDF HERE
+          const pdfBuffer = await generateReceiptPDF(order, mpesaReceipt);
+
           emailPromises.push(
             sendOrderConfirmationEmail({
               toEmail: order.customerEmail,
@@ -62,6 +64,8 @@ export async function POST(req: Request) {
               orderNumber: order.orderNumber,
               totalKes: order.totalKes,
               items: order.items,
+              pdfBuffer: pdfBuffer, // <-- Pass it here
+              mpesaReceipt: mpesaReceipt,
             })
           );
         }
