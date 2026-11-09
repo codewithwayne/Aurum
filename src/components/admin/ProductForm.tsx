@@ -88,13 +88,14 @@ export function ProductForm({ initialData }: { initialData?: InitialProduct }) {
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl pb-24">
       {isEdit && <input type="hidden" name="productId" value={initialData!.id} />}
 
-      {/* BASIC INFO (unchanged) */}
+      {/* BASIC INFO */}
       <div className="bg-white p-6 border border-gray-200 shadow-sm space-y-4">
         <h2 className="font-serif text-xl border-b pb-2 mb-4">Basic Information</h2>
-        <div className="grid grid-cols-2 gap-4">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1">Product Name</label>
-            <input required name="name" defaultValue={initialData?.name} placeholder="e.g. Velvet Oud" className="w-full border p-2 text-sm" onChange={(e) => {
+            <input required name="name" defaultValue={initialData?.name} placeholder="e.g. Velvet Oud" className="w-full border p-3 md:p-2 text-sm" onChange={(e) => {
                 const slugInput = e.currentTarget.form?.elements.namedItem("slug") as HTMLInputElement;
                 if (slugInput && !isEdit) {
                   slugInput.value = e.target.value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
@@ -103,114 +104,118 @@ export function ProductForm({ initialData }: { initialData?: InitialProduct }) {
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">URL Slug (lowercase)</label>
-            <input required name="slug" defaultValue={initialData?.slug} placeholder="e.g. velvet-oud" className="w-full border p-2 text-sm bg-gray-50" />
+            <input required name="slug" defaultValue={initialData?.slug} placeholder="e.g. velvet-oud" className="w-full border p-3 md:p-2 text-sm bg-gray-50" />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1">Brand (Optional)</label>
-            <input name="brand" defaultValue={initialData?.brand || ""} className="w-full border p-2 text-sm" />
+            <input name="brand" defaultValue={initialData?.brand || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Category</label>
-            <select name="category" defaultValue={initialData?.category || "women"} className="w-full border p-2 text-sm">
+            <select name="category" defaultValue={initialData?.category || "women"} className="w-full border p-3 md:p-2 text-sm bg-white">
               <option value="women">Women</option>
               <option value="men">Men</option>
               <option value="unisex">Unisex</option>
             </select>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1">Short Description</label>
-            <input required name="shortDescription" defaultValue={initialData?.shortDescription} className="w-full border p-2 text-sm" />
+            <input required name="shortDescription" defaultValue={initialData?.shortDescription} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Fragrance Family</label>
-            <input name="fragranceFamily" defaultValue={initialData?.fragranceFamily || ""} className="w-full border p-2 text-sm" />
+            <input name="fragranceFamily" defaultValue={initialData?.fragranceFamily || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
         </div>
+
         <div>
           <label className="block text-sm text-gray-600 mb-1">Full Description</label>
-          <textarea required name="fullDescription" defaultValue={initialData?.fullDescription} rows={4} className="w-full border p-2 text-sm" />
+          <textarea required name="fullDescription" defaultValue={initialData?.fullDescription} rows={4} className="w-full border p-3 md:p-2 text-sm" />
         </div>
       </div>
 
-      {/* SCENT PROFILE (unchanged) */}
+      {/* SCENT PROFILE */}
       <div className="bg-white p-6 border border-gray-200 shadow-sm space-y-4">
         <h2 className="font-serif text-xl border-b pb-2 mb-4">Scent Profile (Comma separated)</h2>
-        <div className="grid grid-cols-3 gap-4">
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1">Top Notes</label>
-            <input name="topNotes" defaultValue={initialData?.scentNotes?.top.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="topNotes" defaultValue={initialData?.scentNotes?.top.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Heart Notes</label>
-            <input name="heartNotes" defaultValue={initialData?.scentNotes?.heart.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="heartNotes" defaultValue={initialData?.scentNotes?.heart.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Base Notes</label>
-            <input name="baseNotes" defaultValue={initialData?.scentNotes?.base.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="baseNotes" defaultValue={initialData?.scentNotes?.base.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm text-gray-600 mb-1">Characteristics</label>
-            <input name="characteristics" defaultValue={initialData?.characteristics?.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="characteristics" defaultValue={initialData?.characteristics?.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Occasions</label>
-            <input name="occasions" defaultValue={initialData?.occasions?.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="occasions" defaultValue={initialData?.occasions?.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
           <div>
             <label className="block text-sm text-gray-600 mb-1">Seasons</label>
-            <input name="seasons" defaultValue={initialData?.seasons?.join(", ") || ""} className="w-full border p-2 text-sm" />
+            <input name="seasons" defaultValue={initialData?.seasons?.join(", ") || ""} className="w-full border p-3 md:p-2 text-sm" />
           </div>
         </div>
       </div>
 
-      {/* VARIANTS WITH IMAGES */}
+      {/* VARIANTS */}
       <div className="bg-white p-6 border border-gray-200 shadow-sm">
-        <div className="flex justify-between items-center border-b pb-2 mb-4">
-          <h2 className="font-serif text-xl">Sizes, Prices, Stock & Images</h2>
-          <button type="button" onClick={addVariant} className="text-sm bg-gray-100 px-3 py-1 border hover:bg-gray-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4 gap-4">
+          <h2 className="font-serif text-xl">Sizes, Prices & Stock</h2>
+          <button type="button" onClick={addVariant} className="text-sm bg-gray-100 px-4 py-2 border hover:bg-gray-200 rounded">
             + Add Size
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {variants.map((v, i) => (
-            <div key={i} className="flex flex-col md:flex-row gap-4 items-start bg-gray-50 p-4 border">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Size</label>
-                  <input required value={v.size} onChange={(e) => updateVariant(i, "size", e.target.value)} className="w-full border p-2 text-sm" placeholder="10ml" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Price (KSh)</label>
-                  <input required type="number" value={v.priceKes} onChange={(e) => updateVariant(i, "priceKes", e.target.value)} className="w-full border p-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Stock</label>
-                  <input required type="number" value={v.stock} onChange={(e) => updateVariant(i, "stock", e.target.value)} className="w-full border p-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">SKU</label>
-                  <input required value={v.sku} onChange={(e) => updateVariant(i, "sku", e.target.value)} className="w-full border p-2 text-sm" placeholder="AU-VO-10" />
-                </div>
+            <div key={i} className="flex flex-col md:grid md:grid-cols-5 gap-4 bg-gray-50 p-4 border">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Size (e.g. 10ml)</label>
+                <input required value={v.size} onChange={(e) => updateVariant(i, "size", e.target.value)} className="w-full border p-3 md:p-2 text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Price (KSh)</label>
+                <input required type="number" value={v.priceKes} onChange={(e) => updateVariant(i, "priceKes", e.target.value)} className="w-full border p-3 md:p-2 text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Stock</label>
+                <input required type="number" value={v.stock} onChange={(e) => updateVariant(i, "stock", e.target.value)} className="w-full border p-3 md:p-2 text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">SKU</label>
+                <input required value={v.sku} onChange={(e) => updateVariant(i, "sku", e.target.value)} placeholder="AU-VO-10" className="w-full border p-3 md:p-2 text-sm" />
               </div>
               
-              <div className="w-full md:w-64 flex flex-col gap-2">
-                <label className="block text-xs text-gray-500">Variant Image (Optional)</label>
-                <div className="flex items-center gap-2">
-                  {v.image && <img src={v.image} className="h-10 w-10 object-cover border" />}
-                  <ImageUploader onUpload={(url) => updateVariant(i, "image", url)} />
+              <div className="flex flex-col gap-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1 md:hidden">Variant Image</label>
+                  <div className="flex items-center gap-2 h-full">
+                    {v.image && <img src={v.image} className="h-10 w-10 object-cover border" />}
+                    <ImageUploader onUpload={(url) => updateVariant(i, "image", url)} />
+                  </div>
                 </div>
+                <button type="button" onClick={() => removeVariant(i)} className="text-red-600 text-sm p-2 hover:bg-red-50 border border-transparent hover:border-red-200 rounded md:mt-2">
+                  Remove Size
+                </button>
               </div>
-
-              <button type="button" onClick={() => removeVariant(i)} className="text-red-600 text-sm p-2 hover:bg-red-50 border border-transparent hover:border-red-200 md:mt-6">
-                Remove
-              </button>
             </div>
           ))}
         </div>
@@ -223,32 +228,35 @@ export function ProductForm({ initialData }: { initialData?: InitialProduct }) {
           <p className="text-xs text-gray-500 mb-2">These images show on the shop page and as the default image.</p>
           <ImageUploader onUpload={(url) => setImageUrls((prev) => [...prev, url])} />
           <input type="hidden" name="images" value={imageUrls.join(",")} />
+          
           {imageUrls.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-4">
               {imageUrls.map((url, i) => (
                 <div key={i} className="relative group">
                   <img src={url} alt="Uploaded preview" className="h-24 w-24 object-cover border border-gray-200" />
-                  <button type="button" onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Remove image">×</button>
+                  <button type="button" onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity" title="Remove image">×</button>
                 </div>
               ))}
             </div>
           )}
         </div>
-        <div className="flex gap-6 pt-4 border-t border-gray-100">
+
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 pt-4 border-t border-gray-100 mt-4">
           <label className="flex items-center gap-2 text-sm font-medium">
-            <input type="checkbox" name="isPublished" defaultChecked={initialData?.isPublished} className="w-4 h-4" /> Published
+            <input type="checkbox" name="isPublished" defaultChecked={initialData?.isPublished} className="w-5 h-5 md:w-4 md:h-4" /> Published
           </label>
           <label className="flex items-center gap-2 text-sm font-medium">
-            <input type="checkbox" name="isBestseller" defaultChecked={initialData?.isBestseller} className="w-4 h-4" /> Bestseller
+            <input type="checkbox" name="isBestseller" defaultChecked={initialData?.isBestseller} className="w-5 h-5 md:w-4 md:h-4" /> Bestseller
           </label>
           <label className="flex items-center gap-2 text-sm font-medium">
-            <input type="checkbox" name="isNewArrival" defaultChecked={initialData?.isNewArrival} className="w-4 h-4" /> New Arrival
+            <input type="checkbox" name="isNewArrival" defaultChecked={initialData?.isNewArrival} className="w-5 h-5 md:w-4 md:h-4" /> New Arrival
           </label>
         </div>
       </div>
 
       {error && <p className="text-red-600 text-sm font-medium p-4 bg-red-50 border border-red-200">{error}</p>}
-      <button type="submit" disabled={isSubmitting} className="bg-[#1a3a2e] text-white px-8 py-3 uppercase tracking-widest text-sm hover:opacity-90 disabled:opacity-50">
+      
+      <button type="submit" disabled={isSubmitting} className="w-full md:w-auto bg-[#1a3a2e] text-white px-8 py-4 md:py-3 uppercase tracking-widest text-sm hover:opacity-90 disabled:opacity-50">
         {isSubmitting ? "Saving..." : isEdit ? "Update Product" : "Create Product"}
       </button>
     </form>

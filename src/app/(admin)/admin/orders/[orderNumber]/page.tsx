@@ -15,7 +15,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      {/* Responsive Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
         <div>
           <Link href="/admin/orders" className="text-sm text-gray-500 hover:text-black mb-2 inline-block">
             ← Back to Orders
@@ -45,11 +46,11 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         <div className="lg:col-span-2 space-y-8">
           
           {/* Items */}
-          <div className="bg-white border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white border border-gray-200 p-4 md:p-6 shadow-sm">
             <h2 className="font-serif text-xl mb-4">Items</h2>
             <div className="space-y-4">
               {order.items.map((item) => (
-                <div key={item.variantId} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={item.variantId} className="flex flex-col sm:flex-row justify-between sm:items-center py-3 border-b border-gray-100 last:border-0 gap-2">
                   <div>
                     <p className="font-medium text-[#1a3a2e]">{item.name}</p>
                     <p className="text-sm text-gray-500">{item.size} × {item.quantity}</p>
@@ -65,9 +66,9 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           </div>
 
           {/* Delivery Details */}
-          <div className="bg-white border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white border border-gray-200 p-4 md:p-6 shadow-sm">
             <h2 className="font-serif text-xl mb-4">Delivery Information</h2>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-gray-500">Customer</p>
                 <p className="font-medium">{order.customerName}</p>
@@ -76,7 +77,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 <p className="text-gray-500">Phone</p>
                 <p className="font-medium">{order.customerPhone}</p>
               </div>
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <p className="text-gray-500">Address</p>
                 <p className="font-medium">
                   {order.deliveryAddress.estate}, {order.deliveryAddress.county}
@@ -85,12 +86,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 </p>
               </div>
               {order.deliveryAddress.instructions && (
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <p className="text-gray-500">Additional Instructions</p>
                   <p className="font-medium italic">"{order.deliveryAddress.instructions}"</p>
                 </div>
               )}
-              <div className="col-span-2 mt-2">
+              <div className="md:col-span-2 mt-2">
                 <p className="text-gray-500">Delivery Method</p>
                 <p className="font-medium capitalize">{order.deliveryMethod.replace(/_/g, " ")}</p>
               </div>
@@ -100,10 +101,9 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
         {/* Right Column: Actions */}
         <div className="space-y-8">
-          <div className="bg-white border border-gray-200 p-6 shadow-sm">
+          <div className="bg-white border border-gray-200 p-4 md:p-6 shadow-sm">
             <h2 className="font-serif text-xl mb-4">Update Status</h2>
             
-            {/* Server Action Form */}
             <form action={updateOrderStatus} className="space-y-4">
               <input type="hidden" name="orderNumber" value={order.orderNumber} />
               
@@ -112,7 +112,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 <select 
                   name="status" 
                   defaultValue={order.status}
-                  className="w-full border border-gray-200 p-3 text-sm focus:border-[#1a3a2e] focus:outline-none"
+                  className="w-full border border-gray-200 p-3 md:p-2 text-sm focus:border-[#1a3a2e] focus:outline-none bg-white"
                 >
                   <option value="pending_payment">Pending Payment</option>
                   <option value="paid">Paid (Processing)</option>

@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="font-sans antialiased bg-[#f9f6ef] text-[#1a3a2e]">
+      <body suppressHydrationWarning className="font-sans antialiased bg-[#f9f6ef] text-[#1a3a2e]">
         {children}
       </body>
     </html>
