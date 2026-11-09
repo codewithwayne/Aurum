@@ -2,18 +2,15 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
+import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/server/resend";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 1. Always log the full payload first — this is how we diagnose issues
-    console.log("🚨 PAYHERO CALLBACK:", JSON.stringify(body, null, 2));
-
     const { status, response } = body;
 
     if (!response || !response.ExternalReference) {
-      console.error("❌ Invalid callback payload");
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
@@ -22,7 +19,6 @@ export async function POST(req: Request) {
     const mpesaReceipt = response.MpesaReceiptNumber;
     const innerStatus = response.Status;
 
-    // 2. STRICT SUCCESS: All four conditions must be true
     const isSuccessful =
       status === true &&
       resultCode === 0 &&
@@ -30,7 +26,6 @@ export async function POST(req: Request) {
       mpesaReceipt.length > 0 &&
       innerStatus === "Success";
 
-    // 3. EXPLICIT FAILURE: User cancelled (1037), user busy (1032), or PayHero reported a failure
     const isFailed =
       innerStatus === "Failed" ||
       innerStatus === "Cancelled" ||
@@ -38,24 +33,46 @@ export async function POST(req: Request) {
       resultCode === 1032;
 
     if (isSuccessful) {
+      // 1. Update DB
       await db
         .update(orders)
-        .set({ status: "paid", paymentStatus: "success" })
+        .set({ status: "paid", paymentStatus: "success" ,mpesaReceipt: mpesaReceipt})
+        
         .where(eq(orders.orderNumber, orderNumber));
 
-      console.log(`✅ PAID: ${orderNumber} (Receipt: ${mpesaReceipt})`);
+      // 2. Fetch the order to get details for the emails
+      const [order] = await db.select().from(orders).where(eq(orders.orderNumber, orderNumber)).limit(1);
+
+      if (order) {
+        // 3. Send Emails (Run them in parallel so they don't block each other)
+        const emailPromises = [
+          sendAdminOrderNotification({
+            orderNumber: order.orderNumber,
+            customerName: order.customerName,
+            totalKes: order.totalKes,
+          })
+        ];
+
+        // Only send customer email if they provided one
+        if (order.customerEmail) {
+          emailPromises.push(
+            sendOrderConfirmationEmail({
+              toEmail: order.customerEmail,
+              customerName: order.customerName,
+              orderNumber: order.orderNumber,
+              totalKes: order.totalKes,
+              items: order.items,
+            })
+          );
+        }
+
+        await Promise.all(emailPromises);
+      }
     } else if (isFailed) {
       await db
         .update(orders)
         .set({ status: "cancelled", paymentStatus: "failed" })
         .where(eq(orders.orderNumber, orderNumber));
-
-      console.log(`❌ FAILED: ${orderNumber} (Code: ${resultCode})`);
-    } else {
-      // 4. PENDING: Do nothing. Wait for the real completion callback.
-      console.log(
-        `⏳ PENDING: ${orderNumber} (Code: ${resultCode}, Status: ${innerStatus}). Ignoring for now.`
-      );
     }
 
     return NextResponse.json({ received: true });

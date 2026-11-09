@@ -76,9 +76,17 @@ export function OrderStatusTracker({
       <p className="mt-6 text-sm text-[#1a3a2e]/60">
         Our team will reach out to you shortly on the phone number provided to arrange delivery.
       </p>
-      <Link href="/shop" className="mt-8 inline-block border border-[#1a3a2e] px-8 py-3 text-sm uppercase tracking-widest text-[#1a3a2e] transition-colors hover:bg-[#1a3a2e] hover:text-[#f9f6ef]">
-        Continue Shopping
-      </Link>
+      <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <Link 
+          href={`/account/orders/${orderNumber}`}
+          className="inline-block bg-[#1a3a2e] px-8 py-3 text-sm uppercase tracking-widest text-[#f9f6ef] transition-opacity hover:opacity-90"
+        >
+          View Full Receipt
+        </Link>
+        <Link href="/shop" className="inline-block border border-[#1a3a2e] px-8 py-3 text-sm uppercase tracking-widest text-[#1a3a2e] transition-colors hover:bg-[#1a3a2e] hover:text-[#f9f6ef]">
+          Continue Shopping
+        </Link>
+      </div>
     </div>
   );
 }

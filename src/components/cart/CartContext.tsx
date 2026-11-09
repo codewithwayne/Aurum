@@ -11,6 +11,7 @@ export type CartItem = {
   priceKes: number;
   quantity: number;
   stock: number;
+  image?: string | null; // <-- ADDED
 };
 
 type CartContextType = {
@@ -31,9 +32,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
-  
-  // NEW: State for the drawer
   const [isCartOpen, setIsCartOpen] = useState(false);
+  
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
@@ -67,8 +67,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, newItem];
     });
-    
-    // NEW: Automatically open the drawer when an item is added!
     openCart();
   };
 

@@ -8,7 +8,13 @@ export function Footer() {
           
           {/* Brand & Newsletter */}
           <div className="lg:col-span-1">
-            <h2 className="font-serif text-3xl">Aurum <span className="italic">Parfums</span></h2>
+            <Link href="/" className="inline-block">
+  <img 
+    src="/logo.png" 
+    alt="Aurum Parfums" 
+    className="h-12 w-auto brightness-0 invert" // 'invert' makes a dark logo white for the dark footer
+  />
+</Link>
             <p className="mt-4 text-sm text-[#f9f6ef]/70">
               Considered fragrances for every mood, moment and occasion. Smell like money.
             </p>
@@ -54,9 +60,9 @@ export function Footer() {
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#d4a84b]">Contact</p>
             <ul className="mt-6 space-y-4 text-sm text-[#f9f6ef]/80">
-              <li>[Phone — to be provided]</li>
-              <li>[Email — to be provided]</li>
-              <li>Instagram [@handle]</li>
+              <li>[Phone — 0704 883 105 / 0725 059 232]</li>
+              <li>[Email — aurumparfumske@gmail.com]</li>
+              <li>Instagram [@aurum.parfums.ke]</li>
             </ul>
           </div>
         </div>

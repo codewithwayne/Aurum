@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
+    email: "", // <--- MUST BE HERE
     county: "",
     estate: "",
     building: "",
@@ -45,6 +45,8 @@ export default function CheckoutPage() {
         customer: formData,
         cartItems: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
       };
+
+      
 
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -84,7 +86,9 @@ export default function CheckoutPage() {
               
               <div>
                 <input
-                  required type="tel" placeholder="0712 345 678"
+                  required 
+                  type="tel" 
+                  placeholder="0712 345 678"
                   value={formData.phone} 
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -98,8 +102,10 @@ export default function CheckoutPage() {
 
               <div>
                 <input
-                  type="email" placeholder="Email address (Optional, for receipt)"
-                  value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  type="email" 
+                  placeholder="Email address (Optional, for receipt)"
+                  value={formData.email} 
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full border border-[#1a3a2e]/20 bg-transparent p-4 text-sm focus:border-[#1a3a2e] focus:outline-none"
                 />
               </div>
@@ -190,14 +196,26 @@ export default function CheckoutPage() {
 
         <div className="bg-[#f0eadc] p-8 h-fit">
           <h2 className="font-serif text-2xl text-[#1a3a2e]">Order Summary</h2>
+          
           <div className="mt-6 space-y-4">
             {items.map((item) => (
-              <div key={item.variantId} className="flex justify-between text-sm">
-                <span>{item.quantity} × {item.name} ({item.size})</span>
-                <span>KSh {(item.priceKes * item.quantity).toLocaleString()}</span>
+              <div key={item.variantId} className="flex justify-between items-center gap-4 text-sm">
+                <div className="h-16 w-12 shrink-0 overflow-hidden bg-[#e8e2d5]">
+                  {item.image && (
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-[#1a3a2e]">{item.name}</p>
+                  <p className="text-xs text-[#1a3a2e]/60">{item.size} × {item.quantity}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">KSh {(item.priceKes * item.quantity).toLocaleString()}</p>
+                </div>
               </div>
             ))}
           </div>
+
           <div className="mt-6 border-t border-[#1a3a2e]/10 pt-6 space-y-3 text-sm">
             <div className="flex justify-between">
               <span>Subtotal</span>

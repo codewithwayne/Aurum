@@ -1,15 +1,20 @@
-import { pgTable, uuid, varchar, text, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { customers } from "./customers";
 
 export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
   orderNumber: varchar("order_number", { length: 20 }).notNull().unique(),
   
-  // Customer Details
+  // LINK TO CUSTOMER PROFILE
+  customerId: uuid("customer_id").references(() => customers.id),
+  
+  // Customer Details (Snapshot at time of purchase)
   customerName: varchar("customer_name", { length: 255 }).notNull(),
   customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
+  customerEmail: varchar("customer_email", { length: 255 }),
   
-  // NEW: Delivery Method
-  deliveryMethod: varchar("delivery_method", { length: 20 }).notNull().default("standard"), // "standard" or "arrange_own"
+  // Delivery Method
+  deliveryMethod: varchar("delivery_method", { length: 20 }).notNull().default("standard"),
   
   // Delivery Details
   deliveryAddress: jsonb("delivery_address").$type<{
@@ -34,6 +39,9 @@ export const orders = pgTable("orders", {
   subtotalKes: integer("subtotal_kes").notNull(),
   deliveryFeeKes: integer("delivery_fee_kes").notNull(),
   totalKes: integer("total_kes").notNull(),
+
+  // Add this inside the orders table definition, near the statuses:
+  mpesaReceipt: varchar("mpesa_receipt", { length: 50 }),
 
   // Statuses
   status: varchar("status", { length: 30 }).notNull().default("pending_payment"),

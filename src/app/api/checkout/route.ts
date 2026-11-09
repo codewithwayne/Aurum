@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { inArray, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { orders, productVariants, products } from "@/lib/db/schema";
+import { orders, productVariants, products, customers } from "@/lib/db/schema";
 import { initiateStkPush } from "@/lib/server/payhero";
 
 const checkoutSchema = z.object({
   customer: z.object({
     name: z.string().min(2),
-    // Enforce exactly 10 digits starting with 0
     phone: z.string().regex(/^0[0-9]{9}$/, "Phone number must be 10 digits and start with 0"),
+    email: z.string().optional(), 
     county: z.string(),
     estate: z.string(),
     building: z.string(),
@@ -27,7 +27,6 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     
-    // 1. Validate the request body
     const parsed = checkoutSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -38,14 +37,43 @@ export async function POST(req: Request) {
 
     const { customer, cartItems } = parsed.data;
 
-    // 2. Fetch the real variants from the database
+    // 1. Find or Create Customer
+    let customerId: string;
+    
+    const [existingCustomer] = await db
+      .select()
+      .from(customers)
+      .where(eq(customers.phone, customer.phone))
+      .limit(1);
+
+    if (existingCustomer) {
+      customerId = existingCustomer.id;
+      
+      // Update their info if they provided new details
+      if (customer.email !== existingCustomer.email || customer.name !== existingCustomer.name) {
+        await db.update(customers).set({
+          name: customer.name,
+          email: customer.email || existingCustomer.email,
+          updatedAt: new Date(),
+        }).where(eq(customers.id, customerId));
+      }
+    } else {
+      const [newCustomer] = await db.insert(customers).values({
+        name: customer.name,
+        phone: customer.phone,
+        email: customer.email || null,
+      }).returning();
+      customerId = newCustomer.id;
+    }
+
+    // 2. Fetch variants
     const variantIds = cartItems.map((i) => i.variantId);
     const dbVariants = await db
       .select()
       .from(productVariants)
       .where(inArray(productVariants.id, variantIds));
 
-    // 3. Verify stock and calculate true subtotal securely on the server
+    // 3. Verify stock and calculate subtotal
     let subtotal = 0;
     const orderItemsSnapshot = [];
 
@@ -60,7 +88,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: `Not enough stock for SKU: ${variant.sku}` }, { status: 400 });
       }
 
-      // Fetch product name for the order snapshot
       const [product] = await db.select().from(products).where(eq(products.id, variant.productId));
 
       subtotal += variant.priceKes * item.quantity;
@@ -75,18 +102,20 @@ export async function POST(req: Request) {
       });
     }
 
-    // 4. Calculate final total securely
+    // 4. Calculate final total
     const deliveryFeeKes = customer.deliveryMethod === "standard" ? 300 : 0;
     const totalKes = subtotal + deliveryFeeKes;
     
-    // 5. Generate an order number
+    // 5. Generate order number
     const orderNumber = `AU-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    // 6. Save the Order to the database (Status: pending_payment)
+    // 6. Save the Order (now linked to the customerId)
     const [newOrder] = await db.insert(orders).values({
       orderNumber,
+      customerId, // <-- LINK TO CUSTOMER
       customerName: customer.name,
       customerPhone: customer.phone,
+      customerEmail: customer.email || null,
       deliveryMethod: customer.deliveryMethod,
       deliveryAddress: {
         county: customer.county,
@@ -104,7 +133,6 @@ export async function POST(req: Request) {
     }).returning();
 
     // 7. Trigger PayHero STK Push
-    // Format phone: 0712345678 → 254712345678
     const formattedPhone = customer.phone.replace(/^0/, "254");
 
     try {
@@ -115,8 +143,6 @@ export async function POST(req: Request) {
       });
     } catch (payheroError) {
       console.error("PayHero Error:", payheroError);
-      // The order is saved, but the prompt failed to send. 
-      // We return 502 so the client knows to show a retry message.
       return NextResponse.json(
         { error: "Order saved, but the M-Pesa prompt could not be sent. Please try again." },
         { status: 502 }

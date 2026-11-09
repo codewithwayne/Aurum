@@ -16,6 +16,7 @@ type Product = {
   id: string;
   slug: string;
   name: string;
+  images: string[];
 };
 
 export function ProductBuyBox({ 
@@ -38,6 +39,9 @@ export function ProductBuyBox({
   const isOutOfStock = selectedVariant.stock <= 0;
 
   const handleAddToCart = () => {
+    // Determine which image to use: the variant's image, or fallback to the main product image
+    const imageToUse = selectedVariant.image || product.images?.[0] || null;
+
     addItem({
       variantId: selectedVariant.id,
       productId: product.id,
@@ -47,6 +51,7 @@ export function ProductBuyBox({
       priceKes: selectedVariant.priceKes,
       quantity: quantity,
       stock: selectedVariant.stock,
+      image: imageToUse, // <-- ADDED
     });
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);

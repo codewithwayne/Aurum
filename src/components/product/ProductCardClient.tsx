@@ -10,6 +10,7 @@ type Variant = {
   priceKes: number;
   stock: number;
   sku: string;
+  image: string | null;
 };
 
 type Props = {
@@ -38,6 +39,8 @@ export function ProductCardClient({ product, variants }: Props) {
     e.stopPropagation();
     if (!selectedVariant) return;
 
+    const imageToUse = selectedVariant.image || product.images?.[0] || null;
+
     addItem({
       variantId: selectedVariant.id,
       productId: product.id,
@@ -47,6 +50,7 @@ export function ProductCardClient({ product, variants }: Props) {
       priceKes: selectedVariant.priceKes,
       quantity: 1,
       stock: selectedVariant.stock,
+      image: imageToUse, // <-- ADDED
     });
 
     setIsAdded(true);
@@ -57,7 +61,6 @@ export function ProductCardClient({ product, variants }: Props) {
 
   return (
     <div className="group flex flex-col">
-      {/* IMAGE AREA */}
       <div className="relative aspect-[4/5] overflow-hidden bg-[#e8e2d5]">
         {product.isBestseller && (
           <span className="absolute left-3 top-3 z-10 bg-[#1a3a2e] px-3 py-1 text-[10px] uppercase tracking-widest text-[#d4a84b]">
@@ -82,7 +85,6 @@ export function ProductCardClient({ product, variants }: Props) {
         </Link>
       </div>
 
-      {/* TEXT & PRICE */}
       <div className="mt-5 flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-4">
           <div>
